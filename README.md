@@ -13,5 +13,11 @@ This project was powered mainly by the power of beer and love for Va-11 Hall-a s
 
 You can also invite this bot to your server with: https://discordapp.com/api/oauth2/authorize?client_id=502904311429201935&permissions=0&scope=bot
 Be warned that like this the drink list is shared btween all the servers until I find how to fix this
-Also it's hosted on AWS and in a couple of months I'll run out of the free tier, so if you are lazy to host and want me to keep hosting it you can donato to alpacacharlieoficial@gmail.com via paypal
+Also it's hosted on AWS and in a couple of months I'll run out of the free tier, so if you are lazy to host and want me to keep 
+hosting it you can donato to alpacacharlieoficial@gmail.com via paypal
 (but believe me right now it's much better if you host it yourselves but I ilike money)
+
+﻿# Mutiple Servers update
+ Good news! After a bit more of programming I figgured out how to make a single instance of a bot support multiple servers. The bot 
+ will now create one file for each server taking as a base "drinklist.xls".
+ Also a bug with the serve command that would end in a empty string was fixed
