@@ -3,6 +3,7 @@ import asyncio
 import aiohttp
 import json
 import xlrd
+import os.path
 from xlutils.copy import copy
 import xlwt
 from discord import Game
@@ -11,12 +12,19 @@ from discord.ext.commands import Bot
 from random import randint
 
 
-def open_file():
+def open_file(id :int = None):
     global wb
     global sheet
-    wb = ('drinklist.xls')
-    wb = xlrd.open_workbook(wb)
-    sheet = wb.sheet_by_index(0)
+    wb = 'drinklist'+ str(id) +'.xls'
+    if os.path.isfile(wb):
+        wb = xlrd.open_workbook(wb)
+        sheet = wb.sheet_by_index(0)
+    else:
+        wb = xlrd.open_workbook('drinklist.xls')
+        w = copy(wb)
+        w.save('drinklist'+ str(id) +'.xls')
+        open_file()
+        
 
 def close_file():
     wb.release_resources()
@@ -37,10 +45,10 @@ client =  Bot(command_prefix=BOT_PREFIX)
 async def on_ready():
     await client.change_presence(game=Game(name="to serve drinks"))
     print("CALICOMP 1.1 starting up")
-    open_file()
 
-@client.command()
-async def name(name):
+@client.command(pass_context=True)
+async def name(ctx, name):
+    open_file(ctx.message.server.id)
     rows = get_rows()
     rocks = 0
     aged = 0
@@ -81,11 +89,13 @@ async def name(name):
             output += "All on the rocks, aged and blended" + '\n'
         output +=sheet.cell_value(x, 24)
         await client.say(output)
+    close_file()
     if x == rows:
         await client.say("The drink you want to seach doesn't figure in the B.T.C. files")
 
-@client.command()
-async def flavour(flavour):
+@client.command(pass_context=True)
+async def flavour(ctx,flavour):
+    open_file(ctx.message.server.id)
     flavour = flavour.lower()
     rows = get_rows()
     trigered = int(1)
@@ -132,10 +142,12 @@ async def flavour(flavour):
     if trigered:
         output = "The flavour you are searching for doesn't figure in the B.T.C. files"
     await client.say(output)
+    close_file
         
 
-@client.command()
-async def type(tipe):
+@client.command(pass_context=True)
+async def type(ctx, tipe):
+    open_file(ctx.message.server.id)
     rows = get_rows()
     trigered = int(1)
     output = "hey"
@@ -154,15 +166,18 @@ async def type(tipe):
     if trigered:
         output = "The type you are searching for doesn't figure in the B.T.C. files. You can use cali_type list to see aviable types."
     await client.say(output)
+    close_file()
 
-@client.command()
-async def serve():
+@client.command(pass_context=True)
+async def serve(ctx):
+    open_file(ctx.message.server.id)
+    rows = get_rows()
     x = randint(1,rows)
     output = "You get a "
     output += sheet.cell_value(x, 0)
     output += ". You drink it and "
     if sheet.cell_value(x, 20) == 0:
-        y = randint(0,5)
+        y = randint(1,5)
     else:
         y = randint(1,10)
     if y == 1:
@@ -186,9 +201,11 @@ async def serve():
     if y == 10:
         output += "you don't expect the spanish inquisiton."
     await client.say(output)
+    close_file()
 
-@client.command()
-async def money(price : str = None):
+@client.command(pass_context=True)
+async def money(ctx, price : str = None):
+    open_file(ctx.message.server.id)
     aviableDrinks = 0
     x = 1
     output = "hey"
@@ -206,10 +223,12 @@ async def money(price : str = None):
         await client.say("You cant buy any drink with "+ price + "$")
     else:
         await client.say(output)
+    close_file()
             
 @client.command(pass_context=True)
 async def add_drink(ctx,name : str=None,price:int=None,flav:int=None,clasy:int=None,prom:int=None,clasc:int=None,girl:int=None,man:int=None,bot:int=None,vin:int=None,sob:int=None,blan:int=None,sof:int=None,hap:int=None,burn:int=None,stro:int=None,adel:int=None,brons:int=None,pwd:int=None,flan:int=None,karm:int=None,rock:int=None,aged:int=None,mix:int=None,desc:str=None):
     if "bartender" in [y.name.lower() for y in ctx.message.author.roles]:
+        open_file(ctx.message.server.id)
         if name==None:
             output = "This command needs a very specific input because I don't know how to program and must follow this formating:" + '\n'
             output += "name,price,flavour,classy,promo,classic,girly,manly,bottled,vintage,sobering,bland,soft,happy,burning,strong,Adelhyde,Bronson Ext,Pwd Delta,Flanergide,Karmotrine,Rocks,Aged,Miixed/Blended,Description"+'\n'
@@ -315,7 +334,7 @@ async def add_drink(ctx,name : str=None,price:int=None,flav:int=None,clasy:int=N
             for y in range (0,25):
                 sheet2.write(x,y,"NO")
             close_file()
-            w.save('drinklist.xls')
+            w.save('drinklist'+ str(ctx.message.server.id) +'.xls')
             open_file()
             await client.say("Done")
     else:
@@ -329,20 +348,16 @@ async def reset_drink(ctx):
         for y in range (0,25):
             sheet2.write(30,y,"NO")
         close_file()
-        w.save('drinklist.xls')
-        open_file()
+        w.save('drinklist'+ str(ctx.message.server.id) +'.xls')
+        open_file(ctx.message.server.id)
         await client.say("Done")
     else:
         await client.say("You don't have the necesary role to do that. (Drink Admin)")
 
-        
-@client.command()
-async def credits(flavour):
-    output = "Bot made by Alpacacharlie. You can follow me on twitter on reddits and stuff. "
-    output += "I also have a youtube channel. It has nothing to do with code. It's just memes. "
-    output += "IN general I have too much free time and stuff so you can also add me on discord: AlpacaCharlie#7998. "
-    output += "Sorry for this big spam I am finished now"
-    await client.say (output)
+@client.command(pass_context=True)
+async def id_test(ctx):
+    wb = 'drinklist'+ ctx.message.server.id +'.xls'
+    await client.say(wb)
     
 client.run(TOKEN)
 
