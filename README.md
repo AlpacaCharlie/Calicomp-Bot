@@ -17,7 +17,8 @@ Also it's hosted on AWS and in a couple of months I'll run out of the free tier,
 hosting it you can donato to alpacacharlieoficial@gmail.com via paypal
 (but believe me right now it's much better if you host it yourselves but I ilike money)
 
-﻿# Mutiple Servers update
+# Mutiple Servers update
+
  Good news! After a bit more of programming I figgured out how to make a single instance of a bot support multiple servers. The bot 
  will now create one file for each server taking as a base "drinklist.xls".
  Also a bug with the serve command that would end in a empty string was fixed
