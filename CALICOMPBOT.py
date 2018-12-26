@@ -58,7 +58,7 @@ async def name(ctx, name):
         if name.lower() == sheet.cell_value(x, 0).lower():
             break
     if x != rows:
-        name = sheet.cell_value(x, 0).lower()
+        name = sheet.cell_value(x, 0)
         price = int(sheet.cell_value(x, 1))
         output = str(name) + " has a price of " + str(price) + "$" + '\n' + "Drink flavour: " + sheet.cell_value(x, 2)+ '\n' + "Drink type:"
         for y in range (3,16):
@@ -358,6 +358,54 @@ async def reset_drink(ctx):
 async def id_test(ctx):
     wb = 'drinklist'+ ctx.message.server.id +'.xls'
     await client.say(wb)
+
+@client.command(pass_context=True)
+async def drink(ctx, name = None):
+    open_file(ctx.message.server.id)
+    if name == None:
+        await client.say("Please insert a drink name without whitespaces")
+    else:
+        rows = get_rows()
+        for x in range (1,rows+1):
+            if name.lower() == sheet.cell_value(x, 0).lower():
+                break
+        if x != rows:
+            name = sheet.cell_value(x, 0)
+            output = "You get a "
+        output += sheet.cell_value(x, 0)
+        output += ". You drink it and "
+        if sheet.cell_value(x, 20) == 0:
+            y = randint(1,5)
+        else:
+            y = randint(1,10)
+        if y == 1:
+            output += "feel perfectly fine."
+        if y == 2:
+            output += "still want another drink."
+        if y == 3:
+            output += "notice you can't take the glass because you are a shiba."
+        if y == 4:
+            output += "think if the money was worth it."
+        if y == 5:
+            output += "think that the bartender over there has a John face."
+        if y == 6:
+            output += "start to feel dizzy."
+        if y == 7:
+            output += "karmotrine starts hitting you fast."
+        if y == 8:
+            output += "think about how horrible the flavour was."
+        if y == 9:
+            output += "the drinks makes you want to pat the shiba."
+        if y == 10:
+            output += "you don't expect the spanish inquisiton."
+        await client.say(output)
+        close_file()
+        if x == rows:
+            await client.say("The drink you want to seach doesn't figure in the B.T.C. files")
+
+            
+        
+    
     
 client.run(TOKEN)
 
